@@ -6,14 +6,19 @@ import {
   AccordionSummary,
   Box,
   Button,
+  FormControl,
   Grid,
+  InputLabel,
   List,
   ListItem,
   ListItemText,
+  MenuItem,
   Paper,
+  Select,
   TextField,
   Typography,
 } from "@mui/material";
+
 const SingleProblemPage = () => {
   const isUserLoggedIn = false;
   const { problem_slug } = useParams();
@@ -22,6 +27,8 @@ const SingleProblemPage = () => {
   const [code, setCode] = useState("");
   const [problemDetails, setProblemDetails] = useState([]);
   const [showError, setShowError] = useState(false);
+  const [option, setOption] = useState("Javascript");
+
   useEffect(() => {
     // Fetch the list of problems from the backend
     fetch("http://localhost:3001/questions", {
@@ -33,14 +40,18 @@ const SingleProblemPage = () => {
   }, []);
 
   console.log(problemDetails[problem_slug - 1]);
+
+  const handleChange = (event) => {
+    setOption(event.target.value);
+  };
   // Function to handle code submission
-  async function submitCode(code, testCases, userId) {
+  async function submitCode(code, testCases, userId, option) {
     const response = await fetch("http://localhost:3001/submissions", {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
       },
-      body: JSON.stringify({ code, testCases, userId }),
+      body: JSON.stringify({ code, testCases, userId, option }),
     });
     const result = await response.json();
     // Handle result
@@ -61,7 +72,7 @@ const SingleProblemPage = () => {
 
       const userId = "user123";
 
-      submitCode(code, testCases, userId);
+      submitCode(code, testCases, userId, option);
     } else {
       setShowError(true);
     }
@@ -149,6 +160,21 @@ const SingleProblemPage = () => {
         </Grid>
         <Grid item xs={12} md={6}>
           <Paper sx={{ p: 2 }}>
+            <FormControl sx={{ width: 150, mb: 2 }}>
+              <InputLabel id="code-environment-select-label">
+                Code Env
+              </InputLabel>
+              <Select
+                labelId="code-environment-select-label"
+                id="code-environment-select"
+                value={option}
+                label="Code Environment"
+                onChange={handleChange}
+              >
+                <MenuItem value="Javascript">Javascript</MenuItem>
+                <MenuItem value="C++">C++</MenuItem>
+              </Select>
+            </FormControl>
             <Typography variant="h5" gutterBottom>
               Code Submission
             </Typography>

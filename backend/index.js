@@ -6,7 +6,8 @@ const cors = require("cors");
 const jwt = require("jsonwebtoken");
 const amqp = require("amqplib/callback_api");
 const config = require("./config");
-const secretKey = config.secret;
+const SECRET_KEY = config.secret;
+const fs = require("fs");
 
 const { processSubmission } = require("./submissionProcessor");
 
@@ -64,12 +65,83 @@ const QUESTIONS = [
 
 const SUBMISSION = [];
 
+// Define a helper function to read data from a file
+const readData = (fileName) => {
+  try {
+    const data = fs.readFileSync(fileName, "utf8");
+    console.log(data);
+    return JSON.parse(data);
+  } catch (error) {
+    console.error(error);
+    return [];
+  }
+};
+
+// Define a helper function to write data to a file
+const writeData = (fileName, data) => {
+  try {
+    fs.writeFileSync(fileName, JSON.stringify(data, null, 2));
+  } catch (error) {
+    console.error(error);
+  }
+};
+
+// Define a helper function to generate a JWT
+const generateToken = (payload) => {
+  return jwt.sign(payload, SECRET_KEY, { expiresIn: "1h" });
+};
+
+// Define a helper function to verify a JWT
+const verifyToken = (token) => {
+  try {
+    return jwt.verify(token, SECRET_KEY);
+  } catch (error) {
+    console.error(error);
+    return null;
+  }
+};
+
+// Define a helper function to check if a user is authenticated
+const isUserAuthenticated = (req, res, next) => {
+  // Get the authorization header from the request
+  const authHeader = req.headers.authorization;
+  console.log("authheader", authHeader);
+  // Check if the header exists and has the format 'Bearer token'
+  if (authHeader && authHeader.startsWith("Bearer ")) {
+    // Extract the token from the header
+    const token = authHeader.split(" ")[1];
+    console.log("token", token);
+    // Verify the token
+    const decoded = verifyToken(token);
+    console.log("decoded", decoded);
+    // Check if the token is valid and has the role 'user'
+    if (decoded && decoded.role === "user") {
+      // Attach the decoded payload to the request object
+      req.user = decoded;
+
+      // Proceed to the next middleware or route handler
+      next();
+    } else {
+      // Send an unauthorized response
+      res.status(401).json({ message: "Invalid or expired token" });
+    }
+  } else {
+    // Send an unauthorized response
+    res
+      .status(401)
+      .json({ message: "Missing or malformed authorization header" });
+  }
+};
+
 app.post("/signup", function (req, res) {
   // Add logic to decode the request body
   const { email, password } = req.body;
 
+  // Read the user data from the file
+  const users = readData("users.json");
+
   // Check if the user with the given email already exists in the USERS array
-  const userExists = USERS.some((user) => user.email === email);
+  const userExists = users.some((user) => user.email === email);
 
   // If the user already exists
   if (userExists) {
@@ -77,10 +149,18 @@ app.post("/signup", function (req, res) {
     res.status(409).json({ error: "User already exists" });
   } else {
     // Store the email and password in the USERS array
-    USERS.push({ email: email, password: password });
+    // USERS.push({ email: email, password: password });
+    // Create a new admin object with an id and a role
+    const newUser = { id: users.length + 1, email, password, role: "user" };
+    users.push(newUser);
+    // Write the updated admin data to the file
+    writeData("users.json", users);
 
-    // Send a success response
-    res.status(200).send("User registered successfully");
+    // Generate a JWT for the new admin
+    const token = generateToken(newUser);
+
+    // Send a success response with the token
+    res.status(201).json({ message: "User created successfully", token });
   }
 });
 
@@ -88,18 +168,18 @@ app.post("/login", function (req, res) {
   // Add logic to decode the request body
   const { email, password } = req.body;
 
+  // Read the admin data from the file
+  const users = readData("users.json");
+
   // Check if the user with the given email exists in the USERS array
-  const user = USERS.find((user) => user.email === email);
+  const user = users.find((user) => user.email === email);
 
   // If the user exists and the password is correct
   if (user && user.password === password) {
-    // Generate a token (any random string will do for now)
-    // const token = "random-token";
-    // Generate a token with the user's email as the payload
-    const token = jwt.sign({ email: user.email }, secretKey);
+    const token = generateToken(user);
 
     // Send a success response with the token
-    res.status(200).json({ token: token });
+    res.status(200).json({ message: "Logged in successfully", token });
   } else {
     // Send an error response (Unauthorized)
     res.status(401).json({ error: "Invalid email or password" });
@@ -139,7 +219,7 @@ app.post("/submissions", (req, res) => {
   res.json({ status: "ok" });
 });
 
-processSubmission();
+// processSubmission();
 
 // app.post("/submissions", function (req, res) {
 //   // Retrieve the submitted solution from the request body

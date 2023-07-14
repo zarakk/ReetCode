@@ -20,7 +20,7 @@ import {
 } from "@mui/material";
 
 const SingleProblemPage = () => {
-  const isUserLoggedIn = false;
+  const isUserLoggedIn = true;
   const { problem_slug } = useParams();
   const [selectedTestCase, setSelectedTestCase] = useState(0);
   // State for the code input field

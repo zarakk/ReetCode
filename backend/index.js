@@ -112,7 +112,7 @@ app.get("/questions", function (req, res) {
 });
 
 app.post("/submissions", (req, res) => {
-  const { code, testCases, userId } = req.body;
+  const { code, testCases, userId, option } = req.body;
 
   amqp.connect("amqp://localhost", function (error0, connection) {
     if (error0) {
@@ -129,7 +129,7 @@ app.post("/submissions", (req, res) => {
         durable: false,
       });
 
-      const submission = { code, testCases, userId };
+      const submission = { code, testCases, userId, option };
       channel.sendToQueue(queue, Buffer.from(JSON.stringify(submission)));
 
       console.log(" [x] Sent %s", JSON.stringify(submission));

@@ -186,10 +186,10 @@ app.post("/admin/signup", function (req, res) {
     const newAdmin = { id: admins.length + 1, email, password, role: "admin" };
     admins.push(newAdmin);
     // Write the updated admin data to the file
-    writeData("admin.json", admins);
+    writeData("admins.json", admins);
 
     // Generate a JWT for the new admin
-    const token = generateToken(newUser);
+    const token = generateToken(newAdmin);
 
     // Send a success response with the token
     res.status(201).json({ message: "Admin created successfully", token });

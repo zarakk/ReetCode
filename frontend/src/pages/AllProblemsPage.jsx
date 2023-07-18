@@ -7,10 +7,13 @@ import {
   TableCell,
   TableHead,
   TableRow,
+  TablePagination,
 } from "@mui/material";
 
 const AllProblemsPage = () => {
   const [problems, setProblems] = useState([]);
+  const [page, setPage] = useState(0);
+  const [rowsPerPage, setRowsPerPage] = useState(5);
 
   useEffect(() => {
     // Fetch the list of problems from the backend
@@ -22,23 +25,44 @@ const AllProblemsPage = () => {
       .catch((error) => console.log(error));
   }, []);
 
-  console.log(problems);
+  const handleChangePage = (event, newPage) => {
+    setPage(newPage);
+  };
+
+  const handleChangeRowsPerPage = (event) => {
+    setRowsPerPage(parseInt(event.target.value, 10));
+    setPage(0);
+  };
+
   return (
-    <Table>
-      <TableHead>
-        <TableRow>
-          <TableCell>Title</TableCell>
-          <TableCell>Difficulty</TableCell>
-          <TableCell>Acceptance</TableCell>
-        </TableRow>
-      </TableHead>
-      <TableBody>
-        {/* Render all problems */}
-        {problems?.map((problem, index) => (
-          <SingleProblemPage problem={problem} key={index} />
-        ))}
-      </TableBody>
-    </Table>
+    <>
+      <Table>
+        <TableHead>
+          <TableRow>
+            <TableCell>Title</TableCell>
+            <TableCell>Difficulty</TableCell>
+            <TableCell>Acceptance</TableCell>
+          </TableRow>
+        </TableHead>
+        <TableBody>
+          {/* Render all problems */}
+          {problems
+            .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
+            .map((problem, index) => (
+              <SingleProblemPage problem={problem} key={index} />
+            ))}
+        </TableBody>
+      </Table>
+      <TablePagination
+        rowsPerPageOptions={[5, 10, 25]}
+        component="div"
+        count={problems.length}
+        rowsPerPage={rowsPerPage}
+        page={page}
+        onPageChange={handleChangePage}
+        onRowsPerPageChange={handleChangeRowsPerPage}
+      />
+    </>
   );
 };
 

@@ -186,11 +186,32 @@ app.post("/login", function (req, res) {
   }
 });
 
+app.get("/user/me", isUserAuthenticated, async (req, res) => {
+  try {
+    const users = readData("users.json");
+
+    const user = users.find((user) => user.id === req.user.id);
+
+    if (!user) {
+      return res.status(404).json({ error: "User not found" });
+    }
+
+    // Return the user's information
+    res.json({
+      // id: user._id,
+      email: user.email,
+      // username: user.username,
+    });
+  } catch (error) {
+    console.log(error);
+    res.status(500).json({ error: "Server error" });
+  }
+});
+
 app.get("/questions", function (req, res) {
   // Return all the questions in the QUESTIONS array
   res.json(QUESTIONS);
 });
-
 app.post("/submissions", (req, res) => {
   const { code, testCases, userId, option } = req.body;
 
@@ -213,13 +234,22 @@ app.post("/submissions", (req, res) => {
       channel.sendToQueue(queue, Buffer.from(JSON.stringify(submission)));
 
       console.log(" [x] Sent %s", JSON.stringify(submission));
+
+      const resultsQueue = "resultsQueue";
+
+      channel.assertQueue(resultsQueue, {
+        durable: false,
+      });
+
+      channel.consume(resultsQueue, (msg) => {
+        const result = JSON.parse(msg.content.toString());
+        res.json(result);
+      });
     });
   });
-
-  res.json({ status: "ok" });
 });
 
-// processSubmission();
+processSubmission();
 
 // app.post("/submissions", function (req, res) {
 //   // Retrieve the submitted solution from the request body

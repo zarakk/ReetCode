@@ -17,7 +17,10 @@ import {
   Select,
   TextField,
   Typography,
+  CircularProgress,
+  Snackbar,
 } from "@mui/material";
+import { Alert } from "@mui/material";
 
 const SingleProblemPage = () => {
   const isUserLoggedIn = true;
@@ -28,6 +31,10 @@ const SingleProblemPage = () => {
   const [problemDetails, setProblemDetails] = useState([]);
   const [showError, setShowError] = useState(false);
   const [option, setOption] = useState("Javascript");
+  const [loading, setLoading] = useState(false);
+  const [open, setOpen] = useState(false);
+  const [snackbarMessage, setSnackbarMessage] = useState("");
+  const [snackbarSeverity, setSnackbarSeverity] = useState("success");
 
   useEffect(() => {
     // Fetch the list of problems from the backend
@@ -55,12 +62,23 @@ const SingleProblemPage = () => {
     });
     const result = await response.json();
     // Handle result
+    setLoading(false);
+    if (result.outcome === "AC") {
+      setSnackbarMessage("Code submitted successfully!");
+      setSnackbarSeverity("success");
+    } else {
+      setSnackbarMessage("An error occurred while submitting the code.");
+      setSnackbarSeverity("error");
+    }
+    setOpen(true);
+
     console.log(result);
   }
 
   const handleSubmit = () => {
     if (isUserLoggedIn) {
       setShowError(false);
+      setLoading(true);
       // Implement code submission logic here
       console.log("Submitted code:", code);
       // Example usage
@@ -186,9 +204,14 @@ const SingleProblemPage = () => {
               onChange={(e) => setCode(e.target.value)}
               placeholder="Enter your code here"
             />
+
             <Box sx={{ mt: 2 }}>
-              <Button variant="contained" onClick={handleSubmit}>
-                Submit
+              <Button
+                variant="contained"
+                onClick={handleSubmit}
+                disabled={loading}
+              >
+                {loading ? <CircularProgress size={24} /> : "Submit"}
               </Button>
               {showError && (
                 <Box
@@ -205,6 +228,16 @@ const SingleProblemPage = () => {
                 </Box>
               )}
             </Box>
+
+            <Snackbar
+              open={open}
+              autoHideDuration={6000}
+              onClose={() => setOpen(false)}
+            >
+              <Alert onClose={() => setOpen(false)} severity={snackbarSeverity}>
+                {snackbarMessage}
+              </Alert>
+            </Snackbar>
           </Paper>
         </Grid>
       </Grid>

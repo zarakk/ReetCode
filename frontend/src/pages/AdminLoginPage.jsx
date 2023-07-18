@@ -29,7 +29,7 @@ const AdminLoginPage = () => {
       const token = data.token;
 
       // Save the token in local storage or session storage
-      localStorage.setItem("token", token);
+      localStorage.setItem("admin-token", token);
     } else {
       // Handle the login error
       const errorData = await response.json();

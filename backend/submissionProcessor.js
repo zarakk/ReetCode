@@ -49,21 +49,22 @@ function processSubmission() {
               "--rm",
               "-i",
               "node:latest",
-              option,
+              "node",
               "-e",
               `const testCases = ${JSON.stringify(testCases)};
                const submittedCode = \`${code}\`;
                ${runnerCode}`,
             ]);
-          } else if (option === "c++") {
+          } else if (option === "C++") {
             runnerCode = `
               #include <iostream>
               #include <sstream>
               #include <vector>
               using namespace std;
               
+              ${code}
+              
               int main() {
-                ${code}
                 string line;
                 while(getline(cin, line)) {
                   istringstream iss(line);
@@ -87,7 +88,8 @@ function processSubmission() {
             container.stdin.write(testCases.map((tc) => tc.input).join("\n"));
             container.stdin.end();
           }
-          if (option !== "Javascript" && option !== "c++") {
+
+          if (option !== "Javascript" && option !== "C++") {
             console.error(`Invalid option: ${option}`);
             channel.ack(msg);
             return;
@@ -141,10 +143,20 @@ function processSubmission() {
               }
               return;
             }
+            const resultsQueue = "resultsQueue";
 
             // Handle successful submission
             submissions.push({ userId, code });
             console.log(`AC`);
+            channel.sendToQueue(
+              resultsQueue,
+              Buffer.from(
+                JSON.stringify({
+                  userId,
+                  outcome: "AC",
+                })
+              )
+            );
             if (!acked) {
               // Only acknowledge message if it hasn't been acknowledged yet
               channel.ack(msg);

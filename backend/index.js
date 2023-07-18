@@ -105,15 +105,12 @@ const verifyToken = (token) => {
 const isUserAuthenticated = (req, res, next) => {
   // Get the authorization header from the request
   const authHeader = req.headers.authorization;
-  console.log("authheader", authHeader);
   // Check if the header exists and has the format 'Bearer token'
   if (authHeader && authHeader.startsWith("Bearer ")) {
     // Extract the token from the header
     const token = authHeader.split(" ")[1];
-    console.log("token", token);
     // Verify the token
     const decoded = verifyToken(token);
-    console.log("decoded", decoded);
     // Check if the token is valid and has the role 'user'
     if (decoded && decoded.role === "user") {
       // Attach the decoded payload to the request object
@@ -137,15 +134,12 @@ const isUserAuthenticated = (req, res, next) => {
 const isAdminAuthenticated = (req, res, next) => {
   // Get the authorization header from the request
   const authHeader = req.headers.authorization;
-  console.log("authheader", authHeader);
   // Check if the header exists and has the format 'Bearer token'
   if (authHeader && authHeader.startsWith("Bearer ")) {
     // Extract the token from the header
     const token = authHeader.split(" ")[1];
-    console.log("token", token);
     // Verify the token
     const decoded = verifyToken(token);
-    console.log("decoded", decoded);
     // Check if the token is valid and has the role 'user'
     if (decoded && decoded.role === "admin") {
       // Attach the decoded payload to the request object
@@ -388,21 +382,20 @@ function isAdmin(req, res, next) {
   }
 }
 // ensure that only admins can do that.
-app.post("/questions", isAdmin, function (req, res) {
+app.post("/questions", isAdminAuthenticated, function (req, res) {
+  const { title, description, testCases, expectedOutput } = req.body;
   // Create a question object with the problem ID, solution, and acceptance status
+  console.log("title", title);
   const question = {
-    id,
+    id: QUESTIONS.length + 1,
     title,
     description,
-    testCases: [
-      {
-        input,
-        output,
-      },
-    ],
+    testCases,
+    expectedOutput,
   };
-
+  console.log("question", question);
   QUESTIONS.push(question);
+
   // Send a success response
   res.status(200).json({ message: "Problem added successfully" });
 });

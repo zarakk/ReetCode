@@ -37,13 +37,13 @@ const LoginPage = () => {
       const token = data.token;
 
       // Save the token in local storage or session storage
-      localStorage.setItem("token", token);
+      localStorage.setItem("admin-token", token);
       //redirect to problems page
       setUsername(email);
       setIsLoggedIn(true);
 
       // Display a success message
-      setSnackbarMessage("Logged in successfully!");
+      setSnackbarMessage("Question added successfully!");
       setSnackbarSeverity("success");
       setSnackbarOpen(true);
     } else {

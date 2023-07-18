@@ -133,6 +133,91 @@ const isUserAuthenticated = (req, res, next) => {
   }
 };
 
+// Define a helper function to check if a user is authenticated
+const isAdminAuthenticated = (req, res, next) => {
+  // Get the authorization header from the request
+  const authHeader = req.headers.authorization;
+  console.log("authheader", authHeader);
+  // Check if the header exists and has the format 'Bearer token'
+  if (authHeader && authHeader.startsWith("Bearer ")) {
+    // Extract the token from the header
+    const token = authHeader.split(" ")[1];
+    console.log("token", token);
+    // Verify the token
+    const decoded = verifyToken(token);
+    console.log("decoded", decoded);
+    // Check if the token is valid and has the role 'user'
+    if (decoded && decoded.role === "admin") {
+      // Attach the decoded payload to the request object
+      req.user = decoded;
+
+      // Proceed to the next middleware or route handler
+      next();
+    } else {
+      // Send an unauthorized response
+      res.status(401).json({ message: "Invalid or expired token" });
+    }
+  } else {
+    // Send an unauthorized response
+    res
+      .status(401)
+      .json({ message: "Missing or malformed authorization header" });
+  }
+};
+
+app.post("/admin/signup", function (req, res) {
+  // Add logic to decode the request body
+  const { email, password } = req.body;
+
+  // Read the user data from the file
+  const admins = readData("admins.json");
+
+  // Check if the user with the given email already exists in the USERS array
+  const adminExists = admins.some((admin) => admin.email === email);
+
+  // If the user already exists
+  if (adminExists) {
+    // Send an error response (Conflict)
+    res.status(409).json({ error: "Admin already exists" });
+  } else {
+    // Store the email and password in the USERS array
+    // USERS.push({ email: email, password: password });
+    // Create a new admin object with an id and a role
+    const newAdmin = { id: admins.length + 1, email, password, role: "admin" };
+    admins.push(newAdmin);
+    // Write the updated admin data to the file
+    writeData("admin.json", admins);
+
+    // Generate a JWT for the new admin
+    const token = generateToken(newUser);
+
+    // Send a success response with the token
+    res.status(201).json({ message: "Admin created successfully", token });
+  }
+});
+
+app.post("/admin/login", function (req, res) {
+  // Add logic to decode the request body
+  const { email, password } = req.body;
+
+  // Read the admin data from the file
+  const admins = readData("admins.json");
+
+  // Check if the user with the given email exists in the USERS array
+  const admin = admins.find((admin) => admin.email === email);
+
+  // If the user exists and the password is correct
+  if (admin && admin.password === password) {
+    const token = generateToken(admin);
+
+    // Send a success response with the token
+    res.status(200).json({ message: "Logged in successfully", token });
+  } else {
+    // Send an error response (Unauthorized)
+    res.status(401).json({ error: "Invalid email or password" });
+  }
+});
+
 app.post("/signup", function (req, res) {
   // Add logic to decode the request body
   const { email, password } = req.body;
@@ -212,6 +297,7 @@ app.get("/questions", function (req, res) {
   // Return all the questions in the QUESTIONS array
   res.json(QUESTIONS);
 });
+
 app.post("/submissions", (req, res) => {
   const { code, testCases, userId, option } = req.body;
 

@@ -21,6 +21,7 @@ import {
   Snackbar,
 } from "@mui/material";
 import { Alert } from "@mui/material";
+import HintButton from "../components/HintButton";
 
 const SingleProblemPage = () => {
   const isUserLoggedIn = true;
@@ -204,7 +205,9 @@ const SingleProblemPage = () => {
               onChange={(e) => setCode(e.target.value)}
               placeholder="Enter your code here"
             />
-
+            <HintButton
+              problemDescription={problemDetails[problem_slug - 1]?.description}
+            />
             <Box sx={{ mt: 2 }}>
               <Button
                 variant="contained"

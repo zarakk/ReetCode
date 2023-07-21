@@ -8,9 +8,8 @@ const amqp = require("amqplib/callback_api");
 const config = require("./config");
 const SECRET_KEY = config.secret;
 const fs = require("fs");
-
 const { processSubmission } = require("./submissionProcessor");
-
+const { updateProblem, deleteProblem } = require("./utils");
 app.use(cors());
 
 app.use(bodyParser.urlencoded({ extended: false }));
@@ -398,6 +397,26 @@ app.post("/questions", isAdminAuthenticated, function (req, res) {
 
   // Send a success response
   res.status(200).json({ message: "Problem added successfully" });
+});
+
+// Update a problem
+app.put("/api/problems/:id", (req, res) => {
+  const problemId = req.params.id;
+  // Update the problem in the database
+  // Replace this with your own implementation
+  updateProblem(problemId, req.body).then(() => {
+    res.sendStatus(200);
+  });
+});
+
+// Delete a problem
+app.delete("/api/problems/:id", (req, res) => {
+  const problemId = req.params.id;
+  // Delete the problem from the database
+  // Replace this with your own implementation
+  deleteProblem(problemId).then(() => {
+    res.sendStatus(200);
+  });
 });
 
 app.listen(port, function () {

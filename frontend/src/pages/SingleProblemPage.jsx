@@ -1,5 +1,4 @@
-import { TableCell, TableRow } from "@mui/material";
-
+import { Button, TableCell, TableRow } from "@mui/material";
 import React from "react";
 import { useNavigate } from "react-router-dom";
 
@@ -10,9 +9,26 @@ const SingleProblemPage = (props) => {
     navigate(`/problems/${props.problem?.id}`);
   };
 
+  const handleUpdateClick = (problem) => {
+    props.setProblemToUpdate(problem);
+    props.setIsUpdateModalOpen(true);
+  };
+
+  const handleDeleteClick = () => {
+    // Send a request to the backend to delete the problem
+    // Replace this with your own API call
+    fetch(`/api/problems/${props.problem?.id}`, {
+      method: "DELETE",
+    }).then(() => {
+      // Remove the problem from the list
+      props.onDelete(props.problem?.id);
+    });
+  };
+
   return (
-    <TableRow onClick={handleRowClick} hover={true} sx={{ cursor: "pointer" }}>
+    <TableRow hover={true} sx={{ cursor: "pointer" }}>
       <TableCell
+        onClick={handleRowClick}
         sx={{
           transition: "color 0.5s",
           "&:hover": {
@@ -35,6 +51,32 @@ const SingleProblemPage = (props) => {
         {props.problem?.difficulty}
       </TableCell>
       <TableCell>{props.problem?.acceptance}</TableCell>
+      {props.isAdmin ? (
+        <>
+          <TableCell>
+            {" "}
+            <Button
+              variant="filled"
+              sx={{ backgroundColor: "green", zIndex: 999 }}
+              onClick={handleUpdateClick}
+            >
+              Update
+            </Button>
+          </TableCell>
+          <TableCell>
+            {" "}
+            <Button
+              variant="filled"
+              sx={{ backgroundColor: "red" }}
+              onClick={handleDeleteClick}
+            >
+              Delete
+            </Button>
+          </TableCell>{" "}
+        </>
+      ) : (
+        <></>
+      )}
     </TableRow>
   );
 };

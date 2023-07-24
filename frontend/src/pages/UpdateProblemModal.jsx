@@ -9,9 +9,9 @@ import {
 import React, { useState } from "react";
 
 const UpdateProblemModal = (props) => {
-  const [title, setTitle] = useState(props.problem?.title);
-  const [description, setDescription] = useState(props.problem?.description);
-  const [acceptance, setAcceptance] = useState(props.problem?.acceptance);
+  const [title, setTitle] = useState("");
+  const [description, setDescription] = useState("");
+  const [acceptance, setAcceptance] = useState("");
 
   const handleTitleChange = (event) => {
     setTitle(event.target.value);
@@ -28,12 +28,13 @@ const UpdateProblemModal = (props) => {
   const handleConfirmClick = () => {
     // Send a request to the backend to update the problem
     // Replace this with your own API call
-    fetch(`/api/problems/${props.problem?.id}`, {
+    fetch(`http://localhost:3001/api/problems/${props.problem?.id}`, {
       method: "PUT",
       headers: {
         "Content-Type": "application/json",
       },
       body: JSON.stringify({
+        id: props.problem.id,
         title,
         description,
         acceptance,
@@ -44,8 +45,18 @@ const UpdateProblemModal = (props) => {
     });
   };
 
+  const handleEntered = () => {
+    setTitle(props.problem?.title);
+    setDescription(props.problem?.description);
+    setAcceptance(props.problem?.acceptance);
+  };
+
   return (
-    <Dialog open={props.open} onClose={props.onClose}>
+    <Dialog
+      open={props.open}
+      onClose={props.onClose}
+      TransitionProps={{ onEntered: handleEntered }}
+    >
       <DialogTitle>Update Problem</DialogTitle>
       <DialogContent>
         <TextField
@@ -68,6 +79,7 @@ const UpdateProblemModal = (props) => {
           value={acceptance}
           onChange={handleAcceptanceChange}
           fullWidth
+          multiline={true}
           margin="normal"
         />
       </DialogContent>

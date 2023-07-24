@@ -38,13 +38,20 @@ const AllProblemsPage = () => {
     setPage(0);
   };
 
-  const handleUpdateClick = (problem) => {
+  const handleUpdateModalClose = () => {
+    setIsUpdateModalOpen(false);
+  };
+
+  const handleUpdateModalOpen = (problem) => {
     setProblemToUpdate(problem);
     setIsUpdateModalOpen(true);
   };
 
-  const handleUpdateModalClose = () => {
-    setIsUpdateModalOpen(false);
+  const handleDelete = (problemId) => {
+    // Remove the problem with the given ID from the list
+    setProblems((prevProblems) =>
+      prevProblems.filter((problem) => problem.id !== problemId)
+    );
   };
 
   return (
@@ -76,14 +83,19 @@ const AllProblemsPage = () => {
                 isAdmin={isAdmin}
                 setProblemToUpdate={setProblemToUpdate}
                 setIsUpdateModalOpen={setIsUpdateModalOpen}
+                onOpen={handleUpdateModalOpen}
+                onDelete={handleDelete}
               />
             ))}
         </TableBody>
-        <UpdateProblemModal
-          open={isUpdateModalOpen}
-          onClose={handleUpdateModalClose}
-          problem={problemToUpdate}
-        />
+        {problemToUpdate && (
+          <UpdateProblemModal
+            open={isUpdateModalOpen}
+            onClose={handleUpdateModalClose}
+            onOpen={handleUpdateModalOpen}
+            problem={problemToUpdate}
+          />
+        )}
       </Table>
       <TablePagination
         rowsPerPageOptions={[5, 10, 25]}

@@ -9,15 +9,14 @@ const SingleProblemPage = (props) => {
     navigate(`/problems/${props.problem?.id}`);
   };
 
-  const handleUpdateClick = (problem) => {
-    props.setProblemToUpdate(problem);
-    props.setIsUpdateModalOpen(true);
+  const handleUpdateClick = () => {
+    props.onOpen(props.problem);
   };
 
   const handleDeleteClick = () => {
     // Send a request to the backend to delete the problem
     // Replace this with your own API call
-    fetch(`/api/problems/${props.problem?.id}`, {
+    fetch(`http://localhost:3001/api/problems/${props.problem?.id}`, {
       method: "DELETE",
     }).then(() => {
       // Remove the problem from the list

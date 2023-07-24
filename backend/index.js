@@ -401,21 +401,21 @@ app.post("/questions", isAdminAuthenticated, function (req, res) {
 
 // Update a problem
 app.put("/api/problems/:id", (req, res) => {
-  const problemId = req.params.id;
+  const problemId = req.body.id;
   // Update the problem in the database
   // Replace this with your own implementation
-  updateProblem(problemId, req.body).then(() => {
+  updateProblem(problemId, req.body, QUESTIONS).then(() => {
     res.sendStatus(200);
   });
 });
 
 // Delete a problem
 app.delete("/api/problems/:id", (req, res) => {
-  const problemId = req.params.id;
+  const problemId = req.body.id;
   // Delete the problem from the database
   // Replace this with your own implementation
-  deleteProblem(problemId).then(() => {
-    res.sendStatus(200);
+  deleteProblem(problemId, QUESTIONS).then(() => {
+    res.status(200).json({ message: "Problem Updated successfully" });
   });
 });
 

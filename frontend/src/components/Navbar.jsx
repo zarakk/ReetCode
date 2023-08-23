@@ -2,7 +2,6 @@ import React, { useContext } from "react";
 import { AppBar, Toolbar, Typography, Button, Avatar } from "@mui/material";
 import { Link, useLocation, useNavigate } from "react-router-dom";
 import { AuthContext } from "../context/contextAPI";
-import AccountCircle from "@mui/icons-material/AccountCircle";
 
 const getAuthLink = (currentPage, isLoggedIn) => {
   if (isLoggedIn) {
@@ -16,15 +15,28 @@ const getAuthLink = (currentPage, isLoggedIn) => {
 
 const Navbar = () => {
   const currentPage = useLocation();
-  const { isLoggedIn, username, setIsLoggedIn } = useContext(AuthContext);
+  const { isLoggedIn, username, setIsLoggedIn, isRole, setIsRole } =
+    useContext(AuthContext);
+  const token = localStorage.getItem("token");
+  const adminToken = localStorage.getItem("admin-token");
+  if (token) {
+    setIsRole("user");
+  }
+  if (adminToken) {
+    setIsRole("admin");
+  }
+
   const navigate = useNavigate();
   const authLink = getAuthLink(currentPage.pathname, isLoggedIn);
   const handleLogout = () => {
     localStorage.removeItem("token");
+    localStorage.removeItem("admin-token");
+    setIsRole("");
     setIsLoggedIn(false);
     navigate("/login");
   };
 
+  console.log(isLoggedIn);
   return (
     <AppBar position="static">
       <Toolbar>
@@ -32,23 +44,37 @@ const Navbar = () => {
           ReetCode
         </Typography>
 
-        <Button color="inherit" sx={{ mr: 2 }}>
-          <Link
-            to={"/problems/all"}
-            style={{ color: "white", textDecoration: "none" }}
-          >
-            Problems
-          </Link>
-        </Button>
-        {isLoggedIn && (
+        {isRole === "admin" && (
           <>
-            <Avatar>
-              <AccountCircle />
-              {username}
-            </Avatar>
-            <Typography variant="h6" component="div" sx={{ marginLeft: 1 }}>
-              {username}
-            </Typography>
+            <Button color="inherit" sx={{ mr: 2 }}>
+              <Link
+                to="/admin-dashboard"
+                style={{ color: "white", textDecoration: "none" }}
+              >
+                Admin Dashboard
+              </Link>
+            </Button>
+            <Button color="inherit" sx={{ mr: 2 }}>
+              <Link
+                to="/problems/all"
+                style={{ color: "white", textDecoration: "none" }}
+              >
+                Problems
+              </Link>
+            </Button>
+          </>
+        )}
+
+        {isRole === "user" && (
+          <>
+            <Button color="inherit" sx={{ mr: 2 }}>
+              <Link
+                to="/problems/all"
+                style={{ color: "white", textDecoration: "none" }}
+              >
+                Problems
+              </Link>
+            </Button>
           </>
         )}
 

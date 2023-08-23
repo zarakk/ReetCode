@@ -1,4 +1,4 @@
-import React, { useEffect } from "react";
+import React, { useContext, useEffect } from "react";
 import { useState } from "react";
 import SingleProblemPage from "./SingleProblemPage";
 import {
@@ -9,16 +9,16 @@ import {
   TableRow,
   TablePagination,
 } from "@mui/material";
-import UpdateProblemModal from "./UpdateProblemModal";
+import UpdateProblemModal from "../components/UpdateProblemModal";
+import { AuthContext } from "../context/contextAPI";
 
 const AllProblemsPage = () => {
   const [problems, setProblems] = useState([]);
   const [page, setPage] = useState(0);
   const [rowsPerPage, setRowsPerPage] = useState(5);
-  const [isAdmin] = useState(true);
+  const { isRole } = useContext(AuthContext);
   const [isUpdateModalOpen, setIsUpdateModalOpen] = useState(false);
   const [problemToUpdate, setProblemToUpdate] = useState(null);
-
   useEffect(() => {
     // Fetch the list of problems from the backend
     fetch("http://localhost:3001/questions", {
@@ -62,7 +62,7 @@ const AllProblemsPage = () => {
             <TableCell>Title</TableCell>
             <TableCell>Difficulty</TableCell>
             <TableCell>Acceptance</TableCell>
-            {isAdmin ? (
+            {isRole === "admin" ? (
               <>
                 <TableCell></TableCell>
                 <TableCell></TableCell>
@@ -80,7 +80,6 @@ const AllProblemsPage = () => {
               <SingleProblemPage
                 problem={problem}
                 key={index}
-                isAdmin={isAdmin}
                 setProblemToUpdate={setProblemToUpdate}
                 setIsUpdateModalOpen={setIsUpdateModalOpen}
                 onOpen={handleUpdateModalOpen}
@@ -94,6 +93,7 @@ const AllProblemsPage = () => {
             onClose={handleUpdateModalClose}
             onOpen={handleUpdateModalOpen}
             problem={problemToUpdate}
+            setProblems={setProblems}
           />
         )}
       </Table>

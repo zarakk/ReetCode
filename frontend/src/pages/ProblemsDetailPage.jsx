@@ -2,8 +2,6 @@ import React, { useEffect, useState } from "react";
 import { Link, useParams } from "react-router-dom";
 import AllProblemsPage from "./AllProblemsPage";
 import {
-  Accordion,
-  AccordionSummary,
   Box,
   Button,
   FormControl,
@@ -205,9 +203,9 @@ const SingleProblemPage = () => {
               onChange={(e) => setCode(e.target.value)}
               placeholder="Enter your code here"
             />
-            <HintButton
+            {/* <HintButton
               problemDescription={problemDetails[problem_slug - 1]?.description}
-            />
+            /> */}
             <Box sx={{ mt: 2 }}>
               <Button
                 variant="contained"

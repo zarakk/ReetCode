@@ -1,8 +1,10 @@
 import { Button, TableCell, TableRow } from "@mui/material";
-import React from "react";
+import React, { useContext } from "react";
 import { useNavigate } from "react-router-dom";
+import { AuthContext } from "../context/contextAPI";
 
 const SingleProblemPage = (props) => {
+  const { isRole } = useContext(AuthContext);
   const navigate = useNavigate();
 
   const handleRowClick = () => {
@@ -50,7 +52,7 @@ const SingleProblemPage = (props) => {
         {props.problem?.difficulty}
       </TableCell>
       <TableCell>{props.problem?.acceptance}</TableCell>
-      {props.isAdmin ? (
+      {isRole === "admin" ? (
         <>
           <TableCell>
             {" "}

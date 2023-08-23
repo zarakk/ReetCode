@@ -18,7 +18,8 @@ const LoginPage = () => {
   const [snackbarOpen, setSnackbarOpen] = useState(false);
   const [snackbarMessage, setSnackbarMessage] = useState("");
   const [snackbarSeverity, setSnackbarSeverity] = useState("success");
-  const { isLoggedIn, setIsLoggedIn, setUsername } = useContext(AuthContext);
+  const { isLoggedIn, setIsLoggedIn, setUsername, setIsRole } =
+    useContext(AuthContext);
 
   const navigate = useNavigate();
 
@@ -41,7 +42,7 @@ const LoginPage = () => {
       //redirect to problems page
       setUsername(email);
       setIsLoggedIn(true);
-
+      setIsRole(data.role);
       // Display a success message
       setSnackbarMessage("Question added successfully!");
       setSnackbarSeverity("success");

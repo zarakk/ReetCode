@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useContext, useState } from "react";
 import {
   Box,
   Button,
@@ -7,11 +7,12 @@ import {
   TextField,
   Typography,
 } from "@mui/material";
+import { AuthContext } from "../context/contextAPI";
 
 const SignupPage = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-
+  const { setIsRole } = useContext(AuthContext);
   // Signup function
   const handleSignup = async (email, password) => {
     const response = await fetch("http://localhost:3001/admin/signup", {
@@ -28,6 +29,7 @@ const SignupPage = () => {
 
       // Save the token in local storage or session storage
       localStorage.setItem("admin-token", token);
+      setIsRole(data.role);
 
       // Redirect to the user profile page or perform any other necessary actions
       // Example: window.location.href = '/profile';

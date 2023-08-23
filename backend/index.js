@@ -185,7 +185,9 @@ app.post("/admin/signup", function (req, res) {
     const token = generateToken(newAdmin);
 
     // Send a success response with the token
-    res.status(201).json({ message: "Admin created successfully", token });
+    res
+      .status(201)
+      .json({ message: "Admin created successfully", token, role: "admin" });
   }
 });
 
@@ -204,7 +206,9 @@ app.post("/admin/login", function (req, res) {
     const token = generateToken(admin);
 
     // Send a success response with the token
-    res.status(200).json({ message: "Logged in successfully", token });
+    res
+      .status(200)
+      .json({ message: "Logged in successfully", token, role: "admin" });
   } else {
     // Send an error response (Unauthorized)
     res.status(401).json({ error: "Invalid email or password" });
@@ -238,7 +242,9 @@ app.post("/signup", function (req, res) {
     const token = generateToken(newUser);
 
     // Send a success response with the token
-    res.status(201).json({ message: "User created successfully", token });
+    res
+      .status(201)
+      .json({ message: "User created successfully", token, role: "user" });
   }
 });
 
@@ -257,7 +263,9 @@ app.post("/login", function (req, res) {
     const token = generateToken(user);
 
     // Send a success response with the token
-    res.status(200).json({ message: "Logged in successfully", token });
+    res
+      .status(200)
+      .json({ message: "Logged in successfully", token, role: "user" });
   } else {
     // Send an error response (Unauthorized)
     res.status(401).json({ error: "Invalid email or password" });
@@ -405,7 +413,9 @@ app.put("/api/problems/:id", (req, res) => {
   // Update the problem in the database
   // Replace this with your own implementation
   updateProblem(problemId, req.body, QUESTIONS).then(() => {
-    res.sendStatus(200);
+    res
+      .status(200)
+      .json({ message: "Problem Updated successfully", QUESTIONS });
   });
 });
 
@@ -415,7 +425,9 @@ app.delete("/api/problems/:id", (req, res) => {
   // Delete the problem from the database
   // Replace this with your own implementation
   deleteProblem(problemId, QUESTIONS).then(() => {
-    res.status(200).json({ message: "Problem Updated successfully" });
+    res
+      .status(200)
+      .json({ message: "Problem Deleted successfully", QUESTIONS });
   });
 });
 

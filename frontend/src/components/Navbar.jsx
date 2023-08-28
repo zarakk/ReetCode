@@ -51,7 +51,7 @@ const Navbar = () => {
                 to="/admin-dashboard"
                 style={{ color: "white", textDecoration: "none" }}
               >
-                Admin Dashboard
+                Add Questions
               </Link>
             </Button>
             <Button color="inherit" sx={{ mr: 2 }}>

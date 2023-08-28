@@ -7,7 +7,7 @@ import SignupPage from "./pages/SignUpPage";
 import Navbar from "./components/Navbar";
 import AdminLoginPage from "./pages/AdminLoginPage";
 import AdminSignupPage from "./pages/AdminSignupPage";
-import AdminDashboard from "./pages/AdminDashboard";
+import CreateQuestions from "./pages/CreateQuestions";
 
 function App() {
   /* Add routing here, routes look like -
@@ -31,7 +31,7 @@ function App() {
         />
         <Route path="/admin/login" element={<AdminLoginPage />} />
         <Route path="/admin/signup" element={<AdminSignupPage />} />
-        <Route path="/admin-dashboard" element={<AdminDashboard />} />
+        <Route path="/admin-dashboard" element={<CreateQuestions />} />
       </Routes>
     </Router>
   );

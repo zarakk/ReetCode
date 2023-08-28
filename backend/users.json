@@ -4,5 +4,17 @@
     "email": "zarak@gmail.com",
     "password": "zarak",
     "role": "user"
+  },
+  {
+    "id": 2,
+    "email": "zarak",
+    "password": "zarak",
+    "role": "user"
+  },
+  {
+    "id": 3,
+    "email": "admin@gmail.com",
+    "password": "admin",
+    "role": "user"
   }
 ]

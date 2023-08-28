@@ -155,7 +155,7 @@ const SingleProblemPage = () => {
               {selectedTestCase !== null && (
                 <Box sx={{ p: 2 }}>
                   <Typography variant="body2">
-                    Test Case {selectedTestCase + 1} Input:{" "}
+                    Input:{" "}
                     {
                       problemDetails[problem_slug - 1]?.testCases[
                         selectedTestCase
@@ -163,7 +163,7 @@ const SingleProblemPage = () => {
                     }
                   </Typography>
                   <Typography variant="body2">
-                    Test Case {selectedTestCase + 1} Output:{" "}
+                    Output:{" "}
                     {
                       problemDetails[problem_slug - 1]?.testCases[
                         selectedTestCase

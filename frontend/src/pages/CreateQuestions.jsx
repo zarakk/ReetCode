@@ -2,7 +2,7 @@ import React, { useState } from "react";
 import { Button, TextField, Snackbar, Box, Container } from "@mui/material";
 import { Alert } from "@mui/material";
 
-const AdminDashboard = () => {
+const CreateQuestions = () => {
   const [title, setTitle] = useState("");
   const [description, setDescription] = useState("");
   const [input, setInput] = useState("");
@@ -11,7 +11,8 @@ const AdminDashboard = () => {
   const [snackbarOpen, setSnackbarOpen] = useState(false);
   const [snackbarMessage, setSnackbarMessage] = useState("");
   const [snackbarSeverity, setSnackbarSeverity] = useState("success");
-
+  const [difficulty, setDifficulty] = useState("");
+  const [acceptance, setAcceptance] = useState("");
   const handleSubmit = async (e) => {
     const token = localStorage.getItem("admin-token");
     console.log(token);
@@ -26,6 +27,8 @@ const AdminDashboard = () => {
         body: JSON.stringify({
           title,
           description,
+          difficulty,
+          acceptance,
           testCases: [
             {
               input,
@@ -92,6 +95,20 @@ const AdminDashboard = () => {
             fullWidth
             required
           />
+          <TextField
+            label="Difficulty"
+            value={difficulty}
+            onChange={(e) => setDifficulty(e.target.value)}
+            fullWidth
+            required
+          />
+          <TextField
+            label="Acceptance"
+            value={acceptance}
+            onChange={(e) => setAcceptance(e.target.value)}
+            fullWidth
+            required
+          />
           <Button onClick={handleSubmit}>Add Question</Button>
           <Snackbar
             open={snackbarOpen}
@@ -112,4 +129,4 @@ const AdminDashboard = () => {
   );
 };
 
-export default AdminDashboard;
+export default CreateQuestions;

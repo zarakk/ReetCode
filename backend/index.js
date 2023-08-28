@@ -390,7 +390,14 @@ function isAdmin(req, res, next) {
 }
 // ensure that only admins can do that.
 app.post("/questions", isAdminAuthenticated, function (req, res) {
-  const { title, description, testCases, expectedOutput } = req.body;
+  const {
+    title,
+    description,
+    testCases,
+    expectedOutput,
+    difficulty,
+    acceptance,
+  } = req.body;
   // Create a question object with the problem ID, solution, and acceptance status
   console.log("title", title);
   const question = {
@@ -399,6 +406,8 @@ app.post("/questions", isAdminAuthenticated, function (req, res) {
     description,
     testCases,
     expectedOutput,
+    difficulty,
+    acceptance,
   };
   console.log("question", question);
   QUESTIONS.push(question);

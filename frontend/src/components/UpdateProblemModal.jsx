@@ -43,6 +43,7 @@ const UpdateProblemModal = (props) => {
             title,
             description,
             acceptance,
+            difficulty,
           }),
         }
       );
